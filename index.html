@@ -3,235 +3,48 @@
 <html>
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <title> - jsFiddle demo</title>
-  <script type='text/javascript' src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-  <script type='text/javascript' src="knockout-3.2.0.js"></script>
-  <script type='text/javascript' src="knockout.validation.js"></script>
-  <style type='text/css'>
-    label { display: block; }
-    .validationMessage { color: Red; }
-    .customMessage { color: Orange; }
-    .liveValidation {
-      border: 1px solid red;
-    }
-  </style>
+  <title>Live Validation Demo</title>
+  <link rel="stylesheet" type="text/css" href="styles/live-validation.css" />
+
   <script type='text/javascript'>//<![CDATA[
 
-    var VanillaRunOnDomReady = function() {
 
-      ko.validation.rules.pattern.message = 'Invalid.';
-      ko.validation.configure({
-          registerExtenders: true,
-          messagesOnModified: true,
-          insertMessages: true,
-          parseInputAttributes: true,
-          messageTemplate: null
-      });
-
-      ko.validation.rules["primeiraLetra"] = {
-        validator: function (val, letra) {
-          if (val === undefined) return false;
-          return val.substring(0,1).toLowerCase() == letra.toLowerCase();
-        },
-        message: "primeira letra precisa ser '{0}'"
-      };
-
-      ko.validation.rules["ultimaLetra"] = {
-        validator: function (val, letra) {
-          if (val === undefined) return false;
-          console.log('letra-'+letra)
-          console.log('input-'+val.substr(-1))
-          return val.substr(-1).toLowerCase() == letra.toLowerCase();
-        },
-        message: "ultima letra precisa ser '{0}'"
-      };
-      ko.validation.registerExtenders();
-
-      var captcha = function (val) {
-          return val == 11;
-      };
-
-      var mustEqual = function (val, other) {
-          return val == other();
-      };
-
-      var viewModel = {
-          firstName: ko.observable().extend({ minLength: 2, maxLength: 10 }),
-          lastName: ko.observable().extend({ required: true }),
-          emailAddress: ko.observable().extend({  // custom message
-              required: { message: 'Please supply your email address.' }
-          }),
-          age: ko.observable().extend({ min: 1, max: 100 }),
-          myField: ko.observable().extend({
-            primeiraLetra: 'g',
-            ultimaLetra: 'r'
-          }),
-          location: ko.observable(),
-          subscriptionOptions: ['Technology', 'Music'],
-          subscription: ko.observable().extend({ required: true }),
-          password: ko.observable(),
-          captcha: ko.observable().extend({  // custom validator
-              validation: { validator: captcha, message: 'Please check.' }
-          }),
-          submit: function () {
-              if (viewModel.errors().length == 0) {
-
-                alert('Thank you.');
-
-              } else {
-                  //alert('Please check your submission.');
-                  console.log('nao foi')
-                  viewModel.errors.showAllMessages();
-                  // viewModel.errors.showAllRules(viewModel);
-              }
-          }
-      };
-
-      viewModel.confirmPassword = ko.observable().extend({
-          validation: { validator: mustEqual, message: 'Passwords do not match.', params: viewModel.password }
-      }),
-
-      viewModel.errors = ko.validation.group(viewModel);
-
-      viewModel.requireLocation = function () {
-          viewModel.location.extend({ required: true });
-      };
-
-      var LiveValidation = {
-        _propertyName : '',
-        buildRulesContainer : function (viewModel, valueAccessor, element) {
-          if (valueAccessor && element) {
-            valueAccessor().extend({element: element });
-            var rulesByField = [];
-            for (var property in viewModel) {
-              var propertyName = property.toString();
-              if (viewModel[propertyName].rules) {
-                var rulesByProperty = viewModel[propertyName].rules();
-                for (var propertyRuleIndex in rulesByProperty) {
-                  rulesByField.push(propertyName);
-                }
-              }
-            }
-            var uniqueArrayRules = rulesByField.filter(function(item, pos) {
-              return rulesByField.indexOf(item) == pos;
-            })
-            for (var i in uniqueArrayRules) {
-              var propertyName = uniqueArrayRules[i];
-              $(element).parent().find('.liveValidationContainer').remove();
-              $(element).parent().append('<div class="liveValidationContainer" style="border:1px solid black;"><ul></ul></div>');
-              var container = $(element).parent().find('.liveValidationContainer');
-              container.hide();
-            }
-          }
-        },
-
-        updateRules : function (element, valueAccessor, allBindingsAccessor, viewModel) {
-
-          var observableObject = valueAccessor();
-          var valueUnwrapped = ko.unwrap(observableObject);
-          var rules = observableObject.rules();
-          $(element).nextAll('.liveValidationContainer').find('li').remove();
-
-          for (var _rule in rules) {
-            var msg = ko.validation.rules[rules[_rule].rule];
-            var formattedMessage = ko.validation.formatMessage(msg.message, rules[_rule].params);
-            var isValidRule = ko.validation.rules[rules[_rule].rule].validator(observableObject(), rules[_rule].params);
-            $(element).nextAll('.liveValidationContainer').append('<li>'+formattedMessage+ ' -> '+ isValidRule  + '</li>');
-          }
-
-
-        }
-
-      }
-
-      addEventListener('load', function () {
-
-        ko.bindingHandlers.hasFocus = {
-          init: function(element, valueAccessor) {
-            $(element).focus(function() {
-              var value = valueAccessor();
-              value(true);
-            });
-            $(element).blur(function() {
-              var value = valueAccessor();
-              value(false);
-            });
-          },
-          update: function(element, valueAccessor) {
-            var value = valueAccessor();
-            if (ko.unwrap(value))
-              element.focus();
-            else
-              element.blur();
-          }
-        };
-
-        ko.bindingHandlers.liveValidation = {
-          init: function (element, valueAccessor, allBindingsAccessor, viewModel) {
-            _viewModel = viewModel;
-            LiveValidation.buildRulesContainer(viewModel, valueAccessor, element);
-            LiveValidation.updateRules(element, valueAccessor, allBindingsAccessor, viewModel);
-          },
-          update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-
-            LiveValidation.updateRules(element, valueAccessor, allBindings, viewModel);
-          }
-        };
-        ko.applyBindings(viewModel);
-      });
-    }
-
-    var alreadyrunflag = 0;
-    if (document.addEventListener)
-        document.addEventListener("DOMContentLoaded", function(){
-            alreadyrunflag=1;
-            VanillaRunOnDomReady();
-        }, false);
-    else if (document.all && !window.opera) {
-        document.write('<script type="text/javascript" id="contentloadtag" defer="defer" src="javascript:void(0)"><\/script>');
-        var contentloadtag = document.getElementById("contentloadtag")
-        contentloadtag.onreadystatechange=function(){
-            if (this.readyState=="complete"){
-                alreadyrunflag=1;
-                VanillaRunOnDomReady();
-            }
-        }
-    }
-
-    window.onload = function(){
-      setTimeout("if (!alreadyrunflag){VanillaRunOnDomReady}", 0);
-    }//]]>
 
   </script>
 </head>
 <body>
+
   <script id="customMessageTemplate" type="text/html">
     <em class="customMessage" data-bind='validationMessage: field'></em>
-</script>
-<fieldset>
-    <legend>User: <span data-bind='text: errors().length'></span> errors</legend>
-    <label>First name: <input data-bind='{value: firstName, liveValidation: firstName, valueUpdate: "afterkeydown"}'/></label>
-    <label>Last name: <input data-bind='{value: lastName, valueUpdate: "afterkeydown"}'/></label>
-    <div data-bind='validationOptions: { messageTemplate: "customMessageTemplate" }'>
-      <label>Email: <input data-bind='value: emailAddress' pattern="@"/></label>
-      <label>Location: <input data-bind='value: location' /></label>
-      <label>Age: <input data-bind='value: age' required /></label>
-      <label>My Field: <input data-bind='{value: myField, valueUpdate: "afterkeydown"}' /></label>
-    </div>
-    <label>
-        Subscriptions:
-        <select data-bind='value: subscription, options: subscriptionOptions, optionsCaption: "Choose one..."'></select>
-    </label>
-    <label>Password: <input data-bind='value: password' type="password"/></label>
-    <label>Retype password: <input data-bind='value: confirmPassword' type="password"/></label>
-    <label>10 + 1 = <input data-bind='value: captcha'/></label>
-</fieldset>
-<button type="button" data-bind='click: submit'>Submit</button>
-<br />
-<br />
-<button type="button" data-bind='click: requireLocation'>Make 'Location' required</button>
+  </script>
 
+  <fieldset>
+      <legend>User: <span data-bind='text: errors().length'></span> errors</legend>
+      <label>First name: <input data-bind='{value: firstName, liveValidation: firstName, valueUpdate: "afterkeydown"}'/></label>
+      <label>Last name: <input data-bind='{value: lastName, valueUpdate: "afterkeydown"}'/></label>
+      <div data-bind='validationOptions: { messageTemplate: "customMessageTemplate" }'>
+        <label>Email: <input data-bind='value: emailAddress' pattern="@"/></label>
+        <label>Location: <input data-bind='value: location' /></label>
+        <label>Age: <input data-bind='value: age' required /></label>
+        <label>My Field: <input data-bind='{value: myField, valueUpdate: "afterkeydown"}' /></label>
+      </div>
+      <label>
+          Subscriptions:
+          <select data-bind='value: subscription, options: subscriptionOptions, optionsCaption: "Choose one..."'></select>
+      </label>
+      <label>Password: <input data-bind='value: password' type="password"/></label>
+      <label>Retype password: <input data-bind='value: confirmPassword' type="password"/></label>
+      <label>10 + 1 = <input data-bind='value: captcha'/></label>
+  </fieldset>
+  <button type="button" data-bind='click: submit'>Submit</button>
+  <br />
+  <br />
+  <button type="button" data-bind='click: requireLocation'>Make 'Location' required</button>
+  <script type='text/javascript' src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script type='text/javascript' src="js/libs/knockout-3.2.0.js"></script>
+  <script type='text/javascript' src="js/libs/knockout.validation.js"></script>
+  <script type='text/javascript' src="js/main.js"></script>
+  <script type='text/javascript' src="js/objects/LiveValidation.js"></script>
+  <script type='text/javascript' src="js/models/LiveValidationModel.js"></script>
 </body>
-
-
 </html>

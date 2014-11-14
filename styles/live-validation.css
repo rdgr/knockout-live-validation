@@ -1,0 +1,6 @@
+label { display: block; }
+.validationMessage { color: Red; }
+.customMessage { color: Orange; }
+.liveValidation {
+  border: 1px solid red;
+}
