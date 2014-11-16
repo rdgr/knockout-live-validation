@@ -1,6 +1,25 @@
 var LiveValidation = {
 
-  _propertyName : '',
+  addEvents : function (viewModel, valueAccessor, element) {
+    $(element).on('focus', function() {
+      $(this).nextAll('.liveValidationContainer').slideDown(200);
+    });
+    $(element).on('blur', function() {
+      var container = $(this).nextAll('.liveValidationContainer');
+      container.data( "valid", valueAccessor().isValid().toString() );
+      if (valueAccessor().isValid()) {
+        container.slideUp(200);
+      }
+    });
+  },
+
+  showAllErrors : function () {
+    $('.liveValidationContainer').each(function () {
+      if (!$(this).data("valid") || $(this).data("valid") === "false") {
+        $(this).slideDown(200);
+      }
+    });
+  },
 
   buildRulesContainer : function (viewModel, valueAccessor, element) {
     if (valueAccessor && element) {
@@ -20,16 +39,14 @@ var LiveValidation = {
       })
       for (var i in uniqueArrayRules) {
         var propertyName = uniqueArrayRules[i];
+        $(element).next('.validationMessage').remove(); // Removes Knockout Validation span message.
         $(element).parent().find('.liveValidationContainer').remove();
-        $(element).parent().append('<div class="liveValidationContainer" style="border:1px solid black;"><ul></ul></div>');
-        var container = $(element).parent().find('.liveValidationContainer');
-        //container.hide();
+        $(element).parent().append('<div class="liveValidationContainer rules-box"><ul></ul></div>');
       }
     }
   },
 
   updateRules : function (element, valueAccessor, allBindingsAccessor, viewModel) {
-
     var observableObject = valueAccessor();
     var valueUnwrapped = ko.unwrap(observableObject);
     var rules = observableObject.rules();
@@ -39,9 +56,9 @@ var LiveValidation = {
       var msg = ko.validation.rules[rules[_rule].rule];
       var formattedMessage = ko.validation.formatMessage(msg.message, rules[_rule].params);
       var isValidRule = ko.validation.rules[rules[_rule].rule].validator(observableObject(), rules[_rule].params);
-      $(element).nextAll('.liveValidationContainer').append('<li>'+formattedMessage+ ' -> '+ isValidRule  + '</li>');
+      var sValid = isValidRule ? "valid" : "invalid";
+      $(element).nextAll('.liveValidationContainer').find('ul').append('<li><div class="rule-bullet ' + sValid + '"></div><span>'+formattedMessage+ '</span></li>');
     }
-
   }
 
 }
