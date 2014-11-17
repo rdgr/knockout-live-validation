@@ -55,7 +55,7 @@ var MyViewModel = {
 };
 ```
 
-** Adding your binding handler:**
+**Adding your binding handler:**
 
 ```javascript
 $(function() {
