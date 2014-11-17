@@ -37,7 +37,7 @@ Just check the file `live-validation.css` and see it for yourself.
   - `liveValidation: myInput` does the magic!  
   - `valueUpdate: "afterkeydown"` is necessary so the rules are validated when the user types, and not when the focus is lost.
 
-**Your View Model with multiple rules (one regular rule + one custom rules):**
+**Your View Model with multiple rules (one default rule + one custom rule):**
 
 ```javascript
 var MyViewModel = {
