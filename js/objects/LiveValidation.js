@@ -41,7 +41,7 @@ var LiveValidation = {
         var propertyName = uniqueArrayRules[i];
         $(element).next('.validationMessage').remove(); // Removes Knockout Validation span message.
         $(element).parent().find('.liveValidationContainer').remove();
-        $(element).parent().append('<div class="liveValidationContainer rules-box"><ul></ul></div>');
+        $(element).parent().append('<div class="liveValidationContainer rulesbox"><ul></ul></div>');
       }
     }
   },
@@ -57,7 +57,7 @@ var LiveValidation = {
       var formattedMessage = ko.validation.formatMessage(msg.message, rules[_rule].params);
       var isValidRule = ko.validation.rules[rules[_rule].rule].validator(observableObject(), rules[_rule].params);
       var sValid = isValidRule ? "valid" : "invalid";
-      $(element).nextAll('.liveValidationContainer').find('ul').append('<li><div class="rule-bullet ' + sValid + '"></div><span>'+formattedMessage+ '</span></li>');
+      $(element).nextAll('.liveValidationContainer').find('ul').append('<li><div class="rulesbox-bullet rulesbox-bullet-' + sValid + '"></div><span>'+formattedMessage+ '</span></li>');
     }
   }
 
