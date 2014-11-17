@@ -1,7 +1,5 @@
 $(function() {
 
-  addEventListener('load', function () {
-
     ko.bindingHandlers.liveValidation = {
       init: function (element, valueAccessor, allBindingsAccessor, viewModel) {
         LiveValidation.addEvents(viewModel, valueAccessor, element);
