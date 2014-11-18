@@ -1,6 +1,7 @@
-var LiveValidation = {
+var LiveValidation = (function(){
 
-  addEvents : function (viewModel, valueAccessor, element) {
+  var
+  addEvents = function ( viewModel, valueAccessor, element ) {
     $(element).on('focus', function() {
       $(this).nextAll('.liveValidationContainer').slideDown(200);
     });
@@ -13,7 +14,7 @@ var LiveValidation = {
     });
   },
 
-  showAllErrors : function () {
+  showAllErrors = function () {
     $('.liveValidationContainer').each(function () {
       if (!$(this).data("valid") || $(this).data("valid") === "false") {
         $(this).slideDown(200);
@@ -21,7 +22,7 @@ var LiveValidation = {
     });
   },
 
-  buildRulesContainer : function (viewModel, valueAccessor, element) {
+  buildRulesContainer = function (viewModel, valueAccessor, element) {
     if (valueAccessor && element) {
       valueAccessor().extend({element: element });
       var rulesByField = [];
@@ -46,7 +47,7 @@ var LiveValidation = {
     }
   },
 
-  updateRules : function (element, valueAccessor, allBindingsAccessor, viewModel) {
+  updateRules = function (element, valueAccessor, allBindingsAccessor, viewModel) {
     var observableObject = valueAccessor();
     var valueUnwrapped = ko.unwrap(observableObject);
     var rules = observableObject.rules();
@@ -59,6 +60,13 @@ var LiveValidation = {
       var sValid = isValidRule ? "valid" : "invalid";
       $(element).nextAll('.liveValidationContainer').find('ul').append('<li><div class="rulesbox-bullet rulesbox-bullet-' + sValid + '"></div><span>'+formattedMessage+ '</span></li>');
     }
+  };
+
+  return {
+    addEvents : addEvents,
+    showAllErrors : showAllErrors,
+    buildRulesContainer : buildRulesContainer,
+    updateRules : updateRules
   }
 
-}
+})();
