@@ -37,9 +37,8 @@ var LiveValidation = (function(){
       }
       var uniqueArrayRules = rulesByField.filter(function(item, pos) {
         return rulesByField.indexOf(item) == pos;
-      })
+      });
       for (var i in uniqueArrayRules) {
-        var propertyName = uniqueArrayRules[i];
         $(element).next('.validationMessage').remove(); // Removes Knockout Validation span message.
         $(element).parent().find('.liveValidationContainer').remove();
         $(element).parent().append('<div class="liveValidationContainer rulesbox"><ul></ul></div>');
@@ -67,6 +66,6 @@ var LiveValidation = (function(){
     showAllErrors : showAllErrors,
     buildRulesContainer : buildRulesContainer,
     updateRules : updateRules
-  }
+  };
 
 })();

@@ -78,9 +78,9 @@ $(function() {
 
 ```javascript
 ko.validation.rules["lastLetter"] = {
-  validator: function (val, letra) {
+  validator: function (val, otherVal) {
     if (val === undefined) return false;
-    return val.substr(-1).toLowerCase() == letra.toLowerCase();
+    return val.substr(-1).toLowerCase() == otherVal.toLowerCase();
   },
   message: "Last letter must be '{0}'"
 };
