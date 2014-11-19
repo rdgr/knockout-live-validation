@@ -7,7 +7,7 @@ ko.validation.configure({
     messageTemplate: null
 });
 
-ko.validation.rules.firstLetter = {
+ko.validation.rules['firstLetter'] = {
   getValue: function (obs) {
       return (typeof obs === 'function' ? obs() : obs);
   },
@@ -18,7 +18,7 @@ ko.validation.rules.firstLetter = {
   message: 'First letter must be {0}'
 };
 
-ko.validation.rules.lastLetter = {
+ko.validation.rules["lastLetter"] = {
   validator: function (val, otherVal) {
     if (val === undefined) return false;
     return val.substr(-1).toLowerCase() == otherVal.toLowerCase();
@@ -26,7 +26,7 @@ ko.validation.rules.lastLetter = {
   message: "Last letter must be '{0}'"
 };
 
-ko.validation.rules.mustEqual = {
+ko.validation.rules['mustEqual'] = {
   validator: function (val, otherVal) {
       return val === otherVal;
   },
