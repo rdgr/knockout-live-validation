@@ -14,10 +14,10 @@ var LiveValidationViewModel = {
   subscriptionOptions: ['Technology', 'Music'],
   subscription: ko.observable().extend({ required: true }),
   submit: function () {
-    if (this.errors().length == 0) {
+    if (this.errors().length === 0) {
       alert('Thank you.');
     } else {
-      console.log('Please check your submission.')
+      console.log('Please check your submission.');
       LiveValidation.showAllErrors();
       this.errors.showAllMessages(); // --> Default ko validation messages.
     }
