@@ -1,12 +1,20 @@
-var LiveValidation = (function(){
+(function (root, factory) {
+    if (typeof define === "function" && define.amd) {
+        define(["jquery", "knockout"], factory);
+    } else if (typeof exports === "object") {
+        module.exports = factory(require("jquery", "knockout"));
+    } else {
+        root.LiveValidation = factory(root.jQuery, root.ko);
+    }
+}(this, function ($, ko) {
 
   var
   addEvents = function ( viewModel, valueAccessor, element ) {
-    $(element).on('focus', function() {
-      $(this).nextAll('.liveValidationContainer').slideDown(200);
+    $(element).on("focus", function() {
+      $(this).nextAll(".liveValidationContainer").slideDown(200);
     });
-    $(element).on('blur', function() {
-      var container = $(this).nextAll('.liveValidationContainer');
+    $(element).on("blur", function() {
+      var container = $(this).nextAll(".liveValidationContainer");
       container.data( "valid", valueAccessor().isValid().toString() );
       if (valueAccessor().isValid()) {
         container.slideUp(200);
@@ -15,7 +23,7 @@ var LiveValidation = (function(){
   },
 
   showAllErrors = function () {
-    $('.liveValidationContainer').each(function () {
+    $(".liveValidationContainer").each(function () {
       if (!$(this).data("valid") || $(this).data("valid") === "false") {
         $(this).slideDown(200);
       }
@@ -39,9 +47,9 @@ var LiveValidation = (function(){
         return rulesByField.indexOf(item) == pos;
       });
       for (var i in uniqueArrayRules) {
-        $(element).next('.validationMessage').remove(); // Removes Knockout Validation span message.
-        $(element).parent().find('.liveValidationContainer').remove();
-        $(element).parent().append('<div class="liveValidationContainer rulesbox"><ul></ul></div>');
+        $(element).next(".validationMessage").remove(); // Removes Knockout Validation span message.
+        $(element).parent().find(".liveValidationContainer").remove();
+        $(element).parent().append("<div class=\"liveValidationContainer rulesbox\"><ul></ul></div>");
       }
     }
   },
@@ -50,14 +58,14 @@ var LiveValidation = (function(){
     var observableObject = valueAccessor();
     var valueUnwrapped = ko.unwrap(observableObject);
     var rules = observableObject.rules();
-    $(element).nextAll('.liveValidationContainer').find('li').remove();
+    $(element).nextAll(".liveValidationContainer").find("li").remove();
 
     for (var _rule in rules) {
       var msg = ko.validation.rules[rules[_rule].rule];
       var formattedMessage = ko.validation.formatMessage(msg.message, rules[_rule].params);
       var isValidRule = ko.validation.rules[rules[_rule].rule].validator(observableObject(), rules[_rule].params);
       var sValid = isValidRule ? "valid" : "invalid";
-      $(element).nextAll('.liveValidationContainer').find('ul').append('<li><div class="rulesbox-bullet rulesbox-bullet-' + sValid + '"></div><span>'+formattedMessage+ '</span></li>');
+      $(element).nextAll(".liveValidationContainer").find("ul").append("<li><div class=\"rulesbox-bullet rulesbox-bullet-" + sValid + "\"></div><span>"+formattedMessage+ "</span></li>");
     }
   };
 
@@ -68,4 +76,4 @@ var LiveValidation = (function(){
     updateRules : updateRules
   };
 
-})();
+}));
