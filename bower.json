@@ -1,10 +1,13 @@
 {
   "name": "knockout-live-validation",
-  "version": "0.1",
   "homepage": "https://github.com/rdgr/knockout-live-validation",
   "authors": [
     "Rodger <glauber@rodger.com.br>"
   ],
+  "dependencies": {
+    "jquery": ">=2.1.1",
+    "knockout": ">=3.0.0"
+  },
   "description": "An experiment using Knockout Custom Validation with live rules validation.",
   "main": "js/objects/LiveValidation.js",
   "keywords": [
