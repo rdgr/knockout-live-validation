@@ -1,5 +1,6 @@
 {
   "name": "knockout-live-validation",
+  "version": "0.1",
   "homepage": "https://github.com/rdgr/knockout-live-validation",
   "authors": [
     "Rodger <glauber@rodger.com.br>"
